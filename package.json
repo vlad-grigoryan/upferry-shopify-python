@@ -1,0 +1,16 @@
+{
+  "name": "shopify-python-launch-kit",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "shopify app dev --config shopify.app.toml",
+    "deploy": "uv run python -m app.deploy",
+    "shopify": "shopify"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "devDependencies": {
+    "@shopify/cli": "5.0.0"
+  }
+}

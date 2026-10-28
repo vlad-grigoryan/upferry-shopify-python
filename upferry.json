@@ -1,0 +1,8 @@
+{
+  "deploy": {
+    "startCommand": "python -m app.web",
+    "preDeployCommand": "alembic upgrade head",
+    "healthcheckPath": "/health",
+    "restartPolicyType": "ON_FAILURE"
+  }
+}

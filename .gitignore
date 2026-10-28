@@ -1,0 +1,12 @@
+.env
+.env.*
+!.env.example
+.venv/
+.shopify/
+__pycache__/
+.pytest_cache/
+*.pyc
+node_modules/
+.upferry-shopify.json
+shopify.app.release.toml
+dist/

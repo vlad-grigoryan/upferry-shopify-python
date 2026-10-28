@@ -1,0 +1,6 @@
+name = "FastAPI"
+roles = ["frontend", "backend"]
+webhooks_path = "/webhooks/app/uninstalled"
+
+[commands]
+dev = "uv run python -m app.web"

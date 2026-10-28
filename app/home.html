@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="shopify-api-key" content="{{CLIENT_ID}}">
+  <script src="https://cdn.shopify.com/shopifycloud/app-bridge.js" data-api-key="{{CLIENT_ID}}"></script>
+  <script src="https://cdn.shopify.com/shopifycloud/polaris.js"></script>
+  <title>Shopify Python Launch Kit</title>
+</head>
+<body>
+  <s-page heading="Your Shopify app is running in Python">
+    <s-section heading="Installation connected">
+      <s-paragraph><strong>{{SHOP_NAME}}</strong> ({{SHOP_DOMAIN}})</s-paragraph>
+      <s-paragraph>This page fetched your shop through FastAPI and Shopify's official Python package. Your installation is saved in Postgres.</s-paragraph>
+    </s-section>
+    <s-section heading="Run a background job">
+      <s-paragraph>The separate Python worker will fetch your shop name and return the result here.</s-paragraph>
+      <s-button id="run" variant="primary">Run Python job</s-button>
+      <p id="status" role="status" aria-live="polite">Ready</p>
+      <pre id="result"></pre>
+    </s-section>
+    <s-section heading="Make it yours">
+      <s-paragraph>Replace the sample job with your application logic. Keep request verification and token handling on the supported SDK path.</s-paragraph>
+      <s-link href="https://app.upferry.com/launch/shopify-python" target="_blank">Launch Kit guide</s-link>
+    </s-section>
+  </s-page>
+  <script>
+    const button = document.getElementById('run');
+    const status = document.getElementById('status');
+    const result = document.getElementById('result');
+    const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
+    button.addEventListener('click', async () => {
+      button.setAttribute('disabled', '');
+      result.textContent = '';
+      try {
+        const response = await fetch('/api/jobs', {method: 'POST', headers: {'content-type': 'application/json'}, body: '{}'});
+        if (!response.ok) throw new Error('Could not queue the job. Open the app again or check the service logs.');
+        const queued = await response.json();
+        for (let attempt = 0; attempt < 60; attempt++) {
+          const check = await fetch('/api/jobs/' + encodeURIComponent(queued.id));
+          if (!check.ok) throw new Error('Could not read the job. Open the app again.');
+          const job = await check.json();
+          status.textContent = 'Job: ' + job.status;
+          if (job.status === 'success') { result.textContent = JSON.stringify(job.result, null, 2); return; }
+          if (job.status === 'failed') throw new Error(job.error || 'Job failed');
+          await delay(2000);
+        }
+        status.textContent = 'The job is still waiting. Check that the worker is running.';
+      } catch (error) { status.textContent = error.message; }
+      finally { button.removeAttribute('disabled'); }
+    });
+  </script>
+</body>
+</html>

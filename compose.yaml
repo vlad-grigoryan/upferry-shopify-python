@@ -1,0 +1,15 @@
+services:
+  postgres:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_USER: kit
+      POSTGRES_PASSWORD: kit
+      POSTGRES_DB: kit
+    ports: ["127.0.0.1:54327:5432"]
+    volumes: ["kit-data:/var/lib/postgresql/data"]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U kit"]
+      interval: 2s
+      retries: 20
+volumes:
+  kit-data:

@@ -1,0 +1,10 @@
+.git
+.env
+.env.*
+.venv
+.shopify
+__pycache__
+.pytest_cache
+node_modules
+tests
+.upferry-shopify.json
